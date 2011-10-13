@@ -1,0 +1,19 @@
+
+#> keytool -keystore keystore -alias mapit -genkey -keyalg RSA
+
+#> keytool -certreq -alias mapit -keystore keystore -file mapit.csr
+
+/*
+* At this point you must obtain a certificate from a CA
+*/
+
+#> keytool -keystore keystore -import -alias mapit -file mapit.crt -trustcacerts
+
+
+--------------------
+%JAVA_HOME%\bin\keytool -delete -alias tomcat -keypass changeit
+
+%JAVA_HOME%\bin\keytool -genkey -alias tomcat -keypass changeit -keyalg RSA
+%JAVA_HOME%\bin\keytool -export -alias tomcat -keypass changeit  -file server.crt
+%JAVA_HOME%\bin\keytool -import -file server.crt -keypass changeit -keystore %JAVA_HOME%/jre/lib/security/cacerts
+

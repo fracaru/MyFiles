@@ -1,0 +1,63 @@
+GLASSFISH
+
+Properties jndiProps = new Properties();
+jndiProps.put("java.naming.factory.initial", "com.sun.enterprise.naming.impl.SerialInitContextFactory");
+jndiProps.put("java.naming.factory.url.pkgs", "com.sun.enterprise.naming");
+jndiProps.put("java.naming.factory.state", "com.sun.corba.ee.impl.presentation.rmi.JNDIStateFactoryImpl");
+jndiProps.setProperty("org.omg.CORBA.ORBInitialHost", "127.0.0.1");
+jndiProps.setProperty("org.omg.CORBA.ORBInitialPort", "3700");
+Context ctx = new InitialContext(jndiProps); 
+
+=============================================
+public static void main(String args[]) {
+      // EJB lookup
+      Properties props = new Properties();
+
+      props.setProperty("java.naming.factory.initial",
+            "com.sun.enterprise.naming.SerialInitContextFactory");
+
+      props.setProperty("java.naming.factory.url.pkgs", "com.sun.enterprise.naming");
+
+      props.setProperty("java.naming.factory.state",
+            "com.sun.corba.ee.impl.presentation.rmi.JNDIStateFactoryImpl");
+      props.setProperty("org.omg.CORBA.ORBInitialHost", "localhost");
+      props.setProperty("org.omg.CORBA.ORBInitialPort", "3700");
+
+      // Build the context
+      Context ctx;
+      try {
+         ctx = new InitialContext(props);
+         IService ejb = (IService) ctx.lookup("ejb/service");
+         while (true) {
+            System.out.println(ejb.ping());
+            /*synchronized (test.class) {
+               test.class.wait(500);
+            }*/
+         }
+      } catch (Exception e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
+   }
+  }
+=============================================
+   
+ JBOSS
+ try {
+         Properties env = new Properties();
+         env.put(Context.PROVIDER_URL, "jnp://localhost:1099");
+         env.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
+         env.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
+         env.put("jnp.disableDiscovery", "true");
+         Context context = new InitialContext(env);
+         Foo foo = (Foo) context.lookup("myproject/FooBean/remote");
+         int i = 0;
+         while (true) {
+            i++;
+            foo.bar();
+            if (i % 1000 == 0)
+               System.out.println(i);
+         }
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
